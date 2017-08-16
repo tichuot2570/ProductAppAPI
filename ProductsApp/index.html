@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Contact API App</title>
+</head>
+<body>
+    <div>
+        <h2>All Names</h2>
+        <ul id="contacts" />
+    </div>
+    <div>
+        <h2>Search by ID</h2>
+        <input type="text" id="ContactId" size="5" />
+        <input type="button" value="Search" onclick="find();" />
+        <p id="contact" />
+    </div>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+    <script>
+        var uri = 'api/contacts';
+
+        $(document).ready(function () {
+            // Send an AJAX request
+            $.getJSON(uri)
+                .done(function (data) {
+                    // On success, 'data' contains a list of contacts.
+                    $.each(data, function (key, item) {
+                        // Add a list item for the contact.
+                        $('<li>', { text: formatItem(item) }).appendTo($('#contacts'));
+                    });
+                });
+        });
+
+        function formatItem(item) {
+            return item.Name + ': ' + item.Email;
+        }
+
+        function find() {
+            var id = $('#ContactId').val();
+            $.getJSON(uri + '/' + id)
+                .done(function (data) {
+                    $('#contact').text(formatItem(data));
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $('#contact').text('Error: ' + err);
+                });
+        }
+    </script>
+</body>
+</html>
